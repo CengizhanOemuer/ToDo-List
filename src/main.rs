@@ -7,14 +7,15 @@ fn main() {
     // Initalize application:
     create_application_folder();
 
+    // Test create-to-do-list:
+    create_to_do_list();
+
+    // Test show-to-do-lists:
+    show_to_do_lists();
 }
 
 fn create_application_folder() {
-    // Get home_dir:
-    let mut dir = home_dir().expect("Could not find home directory!");
-
-    // Append path to application dir:
-    dir.push(".to-do-lists");
+    let dir = get_application_folder();
 
     // Check wheter directory does not exists:
     if !dir.exists() {
@@ -22,4 +23,55 @@ fn create_application_folder() {
         fs::create_dir(&dir).expect("Could not create the application directory!");
         println!("Successfully created application directory!")
     }
+}
+
+fn create_to_do_list() {
+    let dir = get_application_folder();
+    
+    // Get user_input:
+    println!("Enter the name of the to-do list:");
+    let mut name = String::new();
+    io::stdin().read_line(&mut name).expect("Failed to read line!");
+    let name = name.trim();
+
+    // Create file_path:
+    let mut file_path = dir.join(name);
+    file_path.set_extension("txt");
+
+    // Create file:
+    let _file = File::create(&file_path).expect("Could not create file!");
+    
+    println!("Created to-do list: {}", name);
+}
+
+fn show_to_do_lists() {
+    let dir = get_application_folder();
+
+    // Read files from directory:
+    if let Ok(files) = fs::read_dir(dir) {
+        // Iterate through files in directory:
+        for file in files {
+            let file = file.expect("Could not read file from directory!");
+
+            // Get file_name from file:
+            let path = file.path();
+            if let Some(file_name) = path.file_name() {
+                if let Some(file_str) = file_name.to_str() {
+                    println!("{}", file_str);
+                }
+            }
+        }
+    } else {
+        println!("No to-do lists found!");
+    }
+}
+
+fn get_application_folder() -> PathBuf{
+    // Get home_dir:
+    let mut dir = home_dir().expect("Could not find home directory!");
+
+    // Append path to application directory:
+    dir.push(".to-do-lists");
+
+    return dir;
 }
