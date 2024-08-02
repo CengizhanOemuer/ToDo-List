@@ -12,6 +12,9 @@ fn main() {
 
     // Test show-to-do-lists:
     show_to_do_lists();
+
+    // Test open-to-do-list:
+    open_to_do_list();
 }
 
 fn create_application_folder() {
@@ -63,6 +66,30 @@ fn show_to_do_lists() {
         }
     } else {
         println!("No to-do lists found!");
+    }
+}
+
+fn open_to_do_list() {
+    let dir = get_application_folder();
+
+    // Get user_input:
+    println!("Enter the name of the to-do list to open:");
+    let mut name = String::new();
+    io::stdin().read_line(&mut name).expect("Failed to read line!");
+
+    // Format user_input:
+    let name = name.trim();
+    let mut file_path = dir.join(name);
+    file_path.set_extension("txt");
+
+    if file_path.exists() {
+        let file = File::open(&file_path).expect("Could not open file!");
+        let reader = BufReader::new(file);
+        for line in reader.lines() {
+            println!("{}", line.expect("Could not read line!"));
+        }
+    } else {
+        println!("To-do list not found: {}", name);
     }
 }
 
