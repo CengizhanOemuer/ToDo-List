@@ -15,6 +15,9 @@ fn main() {
 
     // Test open-to-do-list:
     open_to_do_list();
+
+    // Test delete to-do-list:
+    delete_to_do_list();
 }
 
 fn create_application_folder() {
@@ -88,6 +91,27 @@ fn open_to_do_list() {
         for line in reader.lines() {
             println!("{}", line.expect("Could not read line!"));
         }
+    } else {
+        println!("To-do list not found: {}", name);
+    }
+}
+
+fn delete_to_do_list() {
+    let dir = get_application_folder();
+
+    // Get user_input:
+    println!("Enter the name of the to-do list to delete:");
+    let mut name = String::new();
+    io::stdin().read_line(&mut name).expect("Could not read line!");
+
+    // Format user_input:
+    let name = name.trim();
+    let mut file_path = dir.join(name);
+    file_path.set_extension("txt");
+
+    if file_path.exists() {
+        _ = fs::remove_file(file_path);
+        println!("Sucessfully removed file from directory!");
     } else {
         println!("To-do list not found: {}", name);
     }
