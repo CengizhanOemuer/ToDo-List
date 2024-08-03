@@ -1,23 +1,39 @@
 use std::fs::{self, File};
 use std::io::{self, Write, BufRead, BufReader};
 use std::path::{Path, PathBuf};
+use std::process::exit;
 use dirs::home_dir;
 
 fn main() {
     // Initalize application:
     create_application_folder();
 
-    // Test create-to-do-list:
-    create_to_do_list();
+    run_application();
+}
 
-    // Test show-to-do-lists:
-    show_to_do_lists();
+fn run_application() {
+    println!("To-Do-List-Application\n");
+    println!("Choose what u want to do:");
+    println!("1 --> Create a Todo-List");
+    println!("2 --> Show already existing Todo-Lists");
+    println!("3 --> Open a Todo-List");
+    println!("4 --> Delete a Todo-List");
+    println!("Wrong input will result in exiting the application!\n");
 
-    // Test open-to-do-list:
-    open_to_do_list();
+    // Get user_input:
+    let mut user_input = String::new();
+    io::stdin().read_line(&mut user_input).expect("Failed to read line!");
 
-    // Test delete to-do-list:
-    delete_to_do_list();
+    // Format user_input:
+    let user_input : i32 = user_input.trim().parse().expect("Not a valid number!");
+
+    match user_input {
+        1 => {create_to_do_list();}
+        2 => {show_to_do_lists();}
+        3 => {open_to_do_list();}
+        4 => {delete_to_do_list();}
+        _ => {exit(0);}
+    }
 }
 
 fn create_application_folder() {
@@ -35,7 +51,7 @@ fn create_to_do_list() {
     let dir = get_application_folder();
     
     // Get user_input:
-    println!("Enter the name of the to-do list:");
+    println!("\nEnter the name of the to-do list:");
     let mut name = String::new();
     io::stdin().read_line(&mut name).expect("Failed to read line!");
     let name = name.trim();
@@ -51,6 +67,7 @@ fn create_to_do_list() {
 }
 
 fn show_to_do_lists() {
+    println!();
     let dir = get_application_folder();
 
     // Read files from directory:
@@ -73,10 +90,11 @@ fn show_to_do_lists() {
 }
 
 fn open_to_do_list() {
+    println!(); 
     let dir = get_application_folder();
 
     // Get user_input:
-    println!("Enter the name of the to-do list to open:");
+    println!("\nEnter the name of the to-do list to open:");
     let mut name = String::new();
     io::stdin().read_line(&mut name).expect("Failed to read line!");
 
@@ -97,10 +115,11 @@ fn open_to_do_list() {
 }
 
 fn delete_to_do_list() {
+    println!(); 
     let dir = get_application_folder();
 
     // Get user_input:
-    println!("Enter the name of the to-do list to delete:");
+    println!("\nEnter the name of the to-do list to delete:");
     let mut name = String::new();
     io::stdin().read_line(&mut name).expect("Could not read line!");
 
