@@ -1,8 +1,14 @@
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::{self, Write, BufRead, BufReader};
 use std::path::{Path, PathBuf};
 use std::process::exit;
 use dirs::home_dir;
+
+struct Task {
+    name: String,
+    description : String,
+    finished: bool
+}
 
 fn main() {
     // Initalize application:
@@ -32,6 +38,7 @@ fn run_application() {
         2 => {show_to_do_lists();}
         3 => {open_to_do_list();}
         4 => {delete_to_do_list();}
+        5 => {add_to_do(String::from("MeinTest"));}
         _ => {exit(0);}
     }
 }
@@ -134,6 +141,53 @@ fn delete_to_do_list() {
     } else {
         println!("To-do list not found: {}", name);
     }
+}
+
+fn add_to_do(filename: String) {
+    let dir = get_application_folder();
+
+    // Build file_path:
+    let filename = filename.trim();
+    let mut file_path = dir.join(filename);
+    file_path.set_extension("txt");
+
+    // Open file with append option:
+    let mut file = OpenOptions::new()
+        .append(true)
+        .open(file_path)
+        .expect("Could not open file!");
+
+    // Get user_input:
+    println!("Enter the name of the task:");
+    let mut name = String::new();
+    io::stdin().read_line(&mut name).expect("Could not read_line!");
+
+    println!("Enter the descripton of the task:");
+    let mut description = String::new();
+    io::stdin().read_line(&mut description).expect("Could not read_line!");
+
+    // Create task:
+    let task = Task {
+        name: name,
+        description: description,
+        finished: false
+    };
+
+    file.write(task.name.as_bytes()).expect("Write failed!");
+    file.write(task.description.as_bytes()).expect("Write failed!");
+    file.write(task.finished.to_string().as_bytes()).expect("Write failed!");
+
+    println!("Appended task to file!");
+
+
+}
+
+fn update_to_do() {
+
+}
+
+fn delete_to_do() {
+
 }
 
 fn get_application_folder() -> PathBuf{
